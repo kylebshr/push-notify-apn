@@ -72,8 +72,7 @@ import           Data.Time.Clock
 import           Data.Typeable                        (Typeable)
 import           Data.X509.CertificateStore
 import           GHC.Generics
-import           Network.HTTP2.Frame                  (ErrorCodeId,
-                                                       toErrorCodeId)
+import           Network.HTTP2.Frame                  (ErrorCode)
 import "http2-client" Network.HTTP2.Client
 import "http2-client" Network.HTTP2.Client.Helpers
 import           Network.TLS                          hiding (sendData)
@@ -137,7 +136,7 @@ hexEncodedToken
 hexEncodedToken = ApnToken . B16.encode . B16.decodeLenient . TE.encodeUtf8
 
 -- | Exceptional responses to a send request
-data ApnException = ApnExceptionHTTP ErrorCodeId
+data ApnException = ApnExceptionHTTP ErrorCode
                   | ApnExceptionJSON String
                   | ApnExceptionMissingHeader HTTP2.HeaderName
                   | ApnExceptionUnexpectedResponse
@@ -667,7 +666,7 @@ sendApnRaw connection deviceToken mJwtBearerToken message = bracket_
 #endif
                 let (errOrHeaders, frameResponses, _) = response
                 case errOrHeaders of
-                    Left err -> throwIO (ApnExceptionHTTP $ toErrorCodeId err)
+                    Left err -> throwIO (ApnExceptionHTTP err)
                     Right hdrs1 -> do
                         let status       = getHeaderEx ":status" hdrs1
                             -- apns-id      = getHeaderEx "apns-id" hdrs1
