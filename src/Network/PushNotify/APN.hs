@@ -493,7 +493,7 @@ newConnection aci = do
     let maxConcurrentStreams = aciMaxConcurrentStreams aci
         conf = [ (HTTP2.SettingsMaxFrameSize, 16384)
                , (HTTP2.SettingsMaxConcurrentStreams, maxConcurrentStreams)
-               , (HTTP2.SettingsMaxHeaderBlockSize, 4096)
+               , (HTTP2.SettingsMaxHeaderListSize, 4096)
                , (HTTP2.SettingsInitialWindowSize, 65536)
                , (HTTP2.SettingsEnablePush, 1)
                ]
