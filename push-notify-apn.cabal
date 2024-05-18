@@ -7,7 +7,7 @@ description:
     messages that can be sent to apps on smart phones and tablets
     without the need to keep open a long lived TCP connection per app, dramatically
     reducing the power consumption in standby mode.
-homepage:            https://github.com/memrange/apn#readme
+homepage:            https://github.com/digitallyinduced/push-notify-apn#readme
 license:             BSD3
 license-file:        LICENSE
 author:              Marc Scholten
