@@ -1,3 +1,10 @@
+0.4.0.0
+=======
+
+- Support http2-v4 and http2-v5
+- Check if connection is open in withConnection
+- Use crypton packages
+
 0.3.0.2
 =======
 
