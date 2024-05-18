@@ -10,8 +10,8 @@ description:
 homepage:            https://github.com/memrange/apn#readme
 license:             BSD3
 license-file:        LICENSE
-author:              Hans-Christian Esperer
-maintainer:          hc@hcesperer.org
+author:              Marc Scholten
+maintainer:          marc@digitallyinduced.com
 copyright:           2017-2020 Memrange UG
 category:            Network, Cloud, Mobile
 build-type:          Simple
@@ -77,4 +77,4 @@ test-suite apn-test
 
 source-repository head
   type:     git
-  location: https://github.com/memrange/push-notify-apn
+  location: https://github.com/digitallyinduced/push-notify-apn
