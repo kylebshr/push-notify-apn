@@ -1,3 +1,9 @@
+0.4.0.1
+=======
+
+- Support tls >= 2
+- Add upperbounds for http2
+
 0.4.0.0
 =======
 
