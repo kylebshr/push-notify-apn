@@ -519,7 +519,11 @@ newConnection aci = do
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
+#if MIN_VERSION_tls(0, 2, 0)
+                  , clientUseEarlyData=False
+#else
                   , clientEarlyData=Nothing
+#endif
                   }
           pure clip
         False -> do
@@ -541,7 +545,11 @@ newConnection aci = do
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
+#if MIN_VERSION_tls(0, 2, 0)
+                  , clientUseEarlyData=False
+#else
                   , clientEarlyData=Nothing
+#endif
                   }
           pure clip
 
