@@ -519,7 +519,7 @@ newConnection aci = do
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
-#if MIN_VERSION_tls(0, 2, 0)
+#if MIN_VERSION_tls(2, 0, 0)
                   , clientUseEarlyData=False
 #else
                   , clientEarlyData=Nothing
@@ -545,7 +545,7 @@ newConnection aci = do
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
-#if MIN_VERSION_tls(0, 2, 0)
+#if MIN_VERSION_tls(2, 0, 0)
                   , clientUseEarlyData=False
 #else
                   , clientEarlyData=Nothing
