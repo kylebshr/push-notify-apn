@@ -1,3 +1,8 @@
+0.4.0.2
+=======
+
+- Fixed version check for tls >= 2
+
 0.4.0.1
 =======
 
