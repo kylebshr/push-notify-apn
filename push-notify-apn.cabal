@@ -29,8 +29,9 @@ library
                      , bytestring
                      , containers
                      , data-default
-                     , http2 >= 3.0 && <= 5.1
+                     , http2 >= 3.0 && <= 5.4
                      , http2-client >= 0.10.0.2
+                     , http-types >= 0.12.4
                      , lifted-base
                      , mtl
                      , random
