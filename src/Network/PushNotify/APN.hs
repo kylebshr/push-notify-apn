@@ -91,6 +91,7 @@ import qualified Data.Text.Encoding                   as TE
 
 import qualified Network.HPACK                        as HTTP2
 import qualified Network.HTTP2.Frame                  as HTTP2
+import qualified Network.HTTP.Types                   as HTTP
 
 -- | A session that manages connections to Apple's push notification service
 data ApnSession = ApnSession
@@ -138,7 +139,7 @@ hexEncodedToken = ApnToken . B16.encode . B16.decodeLenient . TE.encodeUtf8
 -- | Exceptional responses to a send request
 data ApnException = ApnExceptionHTTP ErrorCode
                   | ApnExceptionJSON String
-                  | ApnExceptionMissingHeader HTTP2.HeaderName
+                  | ApnExceptionMissingHeader HTTP.HeaderName
                   | ApnExceptionUnexpectedResponse
                   | ApnExceptionConnectionClosed
                   | ApnExceptionSessionClosed
@@ -506,16 +507,16 @@ newConnection aci = do
     clip <- case (aciUseJWT aci) of
         True -> do
           castore <- getSystemCertificateStore
-          let clip = ClientParams
+          let clip = (defaultParamsClient (T.unpack hostname) undefined)
                   { clientUseMaxFragmentLength=Nothing
-                  , clientServerIdentification=(T.unpack hostname, undefined)
                   , clientUseServerNameIndication=True
                   , clientWantSessionResume=Nothing
                   , clientShared=def
                       { sharedCAStore=castore }
                   , clientHooks=def
                       { onCertificateRequest = const . return $ Nothing }
-                  , clientDebug=DebugParams { debugSeed=Nothing, debugPrintSeed=const $ return (), debugVersionForced=Nothing, debugKeyLogger=const $ return () }
+                  , clientDebug=def
+                      { debugSeed=Nothing, debugPrintSeed=const $ return (), debugVersionForced=Nothing, debugKeyLogger=const $ return () }
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
@@ -533,15 +534,15 @@ newConnection aci = do
               shared      = def { sharedCredentials = credentials
                                 , sharedCAStore=castore }
 
-              clip = ClientParams
+              clip = (defaultParamsClient (T.unpack hostname) undefined)
                   { clientUseMaxFragmentLength=Nothing
-                  , clientServerIdentification=(T.unpack hostname, undefined)
                   , clientUseServerNameIndication=True
                   , clientWantSessionResume=Nothing
                   , clientShared=shared
                   , clientHooks=def
                       { onCertificateRequest=const . return . Just $ credential }
-                  , clientDebug=DebugParams { debugSeed=Nothing, debugPrintSeed=const $ return (), debugVersionForced=Nothing, debugKeyLogger=const $ return () }
+                  , clientDebug=def
+                      { debugSeed=Nothing, debugPrintSeed=const $ return (), debugVersionForced=Nothing, debugKeyLogger=const $ return () }
                   , clientSupported=def
                       { supportedVersions=[ TLS12 ]
                       , supportedCiphers=ciphersuite_strong }
@@ -710,10 +711,10 @@ sendApnRaw connection deviceToken mJwtBearerToken message = bracket_
                     eitherDecode body
                         >>= parseEither (\obj -> ctor <$> obj .: "reason")
 
-        getHeaderEx :: HTTP2.HeaderName -> [HTTP2.Header] -> HTTP2.HeaderValue
+        getHeaderEx :: HTTP.HeaderName -> [HTTP2.Header] -> ByteString
         getHeaderEx name headers = fromMaybe (throw $ ApnExceptionMissingHeader name) (DL.lookup name headers)
 
-        defaultHeaders :: Text -> ByteString -> ByteString -> [(HTTP2.HeaderName, ByteString)]
+        defaultHeaders :: Text -> ByteString -> ByteString -> [(HTTP.HeaderName, ByteString)]
         defaultHeaders hostname token topic = [ ( ":method", "POST" )
                                               , ( ":scheme", "https" )
                                               , ( ":authority", TE.encodeUtf8 hostname )
