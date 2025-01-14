@@ -507,7 +507,7 @@ newConnection aci = do
     clip <- case (aciUseJWT aci) of
         True -> do
           castore <- getSystemCertificateStore
-          let clip = (defaultParamsClient (T.unpack hostname) undefined)
+          let clip = (defaultParamsClient (T.unpack hostname) "")
                   { clientUseMaxFragmentLength=Nothing
                   , clientUseServerNameIndication=True
                   , clientWantSessionResume=Nothing
@@ -534,7 +534,7 @@ newConnection aci = do
               shared      = def { sharedCredentials = credentials
                                 , sharedCAStore=castore }
 
-              clip = (defaultParamsClient (T.unpack hostname) undefined)
+              clip = (defaultParamsClient (T.unpack hostname) "")
                   { clientUseMaxFragmentLength=Nothing
                   , clientUseServerNameIndication=True
                   , clientWantSessionResume=Nothing
