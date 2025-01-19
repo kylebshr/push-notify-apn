@@ -1,3 +1,10 @@
+0.4.0.3
+=======
+
+- Support http-2-5.3
+- Support data-default >= 0.8
+- Use empty string instead of undefined in server id
+
 0.4.0.2
 =======
 
