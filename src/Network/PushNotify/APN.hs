@@ -336,7 +336,7 @@ instance ToJSON JsonApsMessage where
 instance FromJSON JsonApsMessage where
     parseJSON = genericParseJSON defaultOptions
         { fieldLabelModifier = \s -> case drop 3 s of
-            "mutableContent" -> "mutable-content"
+            "mutable-content" -> "mutableContent"
             other -> map toLower other
         }
 
