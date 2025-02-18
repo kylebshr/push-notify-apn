@@ -37,6 +37,8 @@ module Network.PushNotify.APN
     , clearAlertMessage
     , clearBadge
     , clearCategory
+    , setMutableContent
+    , clearMutableContent
     , clearSound
     , addSupplementalField
     , closeSession
@@ -190,11 +192,13 @@ data JsonApsMessage
     -- in the Library/Sounds directory of the app.
     , jamCategory :: !(Maybe Text)
     -- ^ The category of the notification. Must be registered by the app beforehand.
+    , jamMutableContent :: !(Maybe Int)
+    -- ^ Whether the message has mutable content.
     } deriving (Generic, Show)
 
 -- | Create an empty apn message
 emptyMessage :: JsonApsMessage
-emptyMessage = JsonApsMessage Nothing Nothing Nothing Nothing
+emptyMessage = JsonApsMessage Nothing Nothing Nothing Nothing Nothing
 
 -- | Set a sound for an APN message
 setSound
@@ -231,6 +235,24 @@ clearCategory
     -> JsonApsMessage
     -- ^ The modified message
 clearCategory a = a { jamCategory = Nothing }
+
+-- | Set the mutable content part of an APN message
+setMutableContent
+    :: Int
+    -- ^ The number of mutable content to set
+    -> JsonApsMessage
+    -- ^ The message to modify
+    -> JsonApsMessage
+    -- ^ The modified message
+setMutableContent i a = a { jamMutableContent = Just i }
+
+-- | Clear the mutable content part of an APN message
+clearMutableContent
+    :: JsonApsMessage
+    -- ^ The message to modify
+    -> JsonApsMessage
+    -- ^ The modified message
+clearMutableContent a = a { jamMutableContent = Nothing }
 
 -- | Set the badge part of an APN message
 setBadge
@@ -306,11 +328,17 @@ clearAlertMessage a = a { jamAlert = Nothing }
 
 instance ToJSON JsonApsMessage where
     toJSON     = genericToJSON     defaultOptions
-        { fieldLabelModifier = drop 3 . map toLower }
+        { fieldLabelModifier = \s -> case drop 3 s of
+            "MutableContent" -> "mutable-content"
+            other -> map toLower other
+        }
 
 instance FromJSON JsonApsMessage where
     parseJSON = genericParseJSON defaultOptions
-        { fieldLabelModifier = drop 3 . map toLower }
+        { fieldLabelModifier = \s -> case drop 3 s of
+            "mutable-content" -> "MutableContent"
+            other -> map toLower other
+        }
 
 -- | A push notification message
 data JsonAps

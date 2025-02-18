@@ -16,6 +16,7 @@ spec = do
             "category" .= Null,
             "sound"    .= Null,
             "badge"    .= Null,
+            "mutable-content" .= Null,
             "alert"    .= object [
               "title" .= String "hello",
               "body"  .= String "world"
@@ -27,6 +28,7 @@ spec = do
             "category" .= Null,
             "sound"    .= Null,
             "badge"    .= Null,
+            "mutable-content" .= Null,
             "alert"    .= object [ "body"  .= String "hello world" ]
           ]
 
