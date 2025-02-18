@@ -329,14 +329,14 @@ clearAlertMessage a = a { jamAlert = Nothing }
 instance ToJSON JsonApsMessage where
     toJSON     = genericToJSON     defaultOptions
         { fieldLabelModifier = \s -> case drop 3 s of
-            "mutableContent" -> "mutable-content"
+            "MutableContent" -> "mutable-content"
             other -> map toLower other
         }
 
 instance FromJSON JsonApsMessage where
     parseJSON = genericParseJSON defaultOptions
         { fieldLabelModifier = \s -> case drop 3 s of
-            "mutable-content" -> "mutableContent"
+            "mutable-content" -> "MutableContent"
             other -> map toLower other
         }
 
