@@ -11,7 +11,7 @@ spec = do
   describe "JsonApsMessage" $
     context "JSON encoder" $ do
       it "encodes an APNS message with a title and body" $
-        toJSON (alertMessage "hello" "world") `shouldBe`
+        toJSON (alertMessage "hello" "world" Nothing) `shouldBe`
           object [
             "category" .= Null,
             "sound"    .= Null,
@@ -19,6 +19,19 @@ spec = do
             "mutable-content" .= Null,
             "alert"    .= object [
               "title" .= String "hello",
+              "body"  .= String "world"
+            ]
+          ]
+      it "encodes an APNS message with a title, subtitle and body" $
+        toJSON (alertMessage "hello" "world" (Just "there")) `shouldBe`
+          object [
+            "category" .= Null,
+            "sound"    .= Null,
+            "badge"    .= Null,
+            "mutable-content" .= Null,
+            "alert"    .= object [
+              "title" .= String "hello",
+              "subtitle" .= String "there",
               "body"  .= String "world"
             ]
           ]
@@ -35,19 +48,19 @@ spec = do
   describe "JsonAps" $
     context "JSON encoder" $ do
       it "encodes normally when there are no supplemental fields" $
-        toJSON (newMessage (alertMessage "hello" "world")) `shouldBe` object [
-          "aps"                .= alertMessage "hello" "world",
+        toJSON (newMessage (alertMessage "hello" "world" Nothing)) `shouldBe` object [
+          "aps"                .= alertMessage "hello" "world" Nothing,
           "appspecificcontent" .= Null,
           "data" .= object []
         ]
 
       it "encodes supplemental fields" $ do
-        let msg = newMessage (alertMessage "hello" "world")
+        let msg = newMessage (alertMessage "hello" "world" Nothing)
                   & addSupplementalField "foo" ("bar" :: String)
                   & addSupplementalField "aaa" ("qux" :: String)
 
         toJSON msg `shouldBe` object [
-            "aps"                .= alertMessage "hello" "world",
+            "aps"                .= alertMessage "hello" "world" Nothing,
             "appspecificcontent" .= Null,
             "data"               .= object ["aaa" .= String "qux", "foo" .= String "bar"]
           ]
