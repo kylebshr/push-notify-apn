@@ -164,6 +164,8 @@ data JsonApsAlert = JsonApsAlert
     -- ^ A short string describing the purpose of the notification.
     , jaaBody  :: !Text
     -- ^ The text of the alert message.
+    , jaaSubtitle :: !(Maybe Text)
+    -- ^ Additional information that explains the purpose of the notification.
     } deriving (Generic, Show)
 
 instance ToJSON JsonApsAlert where
@@ -278,9 +280,11 @@ alertMessage
     -- ^ The title of the message
     -> Text
     -- ^ The body of the message
+    -> Maybe Text
+    -- ^ The subtitle of the message
     -> JsonApsMessage
     -- ^ The modified message
-alertMessage title text = setAlertMessage title text emptyMessage
+alertMessage title text subtitle = setAlertMessage title text subtitle emptyMessage
 
 -- | Create a new APN message with a body and no title
 bodyMessage
@@ -296,13 +300,15 @@ setAlertMessage
     -- ^ The title of the message
     -> Text
     -- ^ The body of the message
+    -> Maybe Text
+    -- ^ The subtitle of the message
     -> JsonApsMessage
     -- ^ The message to alter
     -> JsonApsMessage
     -- ^ The modified message
-setAlertMessage title text a = a { jamAlert = Just jam }
+setAlertMessage title text subtitle a = a { jamAlert = Just jam }
   where
-    jam = JsonApsAlert (Just title) text
+    jam = JsonApsAlert (Just title) text subtitle
 
 -- | Set the body of an APN message without affecting the title
 setMessageBody
@@ -315,7 +321,7 @@ setMessageBody
 setMessageBody text a = a { jamAlert = Just newJaa }
   where
     newJaa = case jamAlert a of
-                Nothing  -> JsonApsAlert Nothing text
+                Nothing  -> JsonApsAlert Nothing text Nothing
                 Just jaa -> jaa { jaaBody = text }
 
 -- | Remove the alert part of an APN message
