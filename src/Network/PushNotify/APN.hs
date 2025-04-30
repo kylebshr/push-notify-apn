@@ -39,6 +39,8 @@ module Network.PushNotify.APN
     , clearCategory
     , setMutableContent
     , clearMutableContent
+    , setInterruptionLevel
+    , clearInterruptionLevel
     , clearSound
     , addSupplementalField
     , closeSession
@@ -53,6 +55,7 @@ module Network.PushNotify.APN
     , ApnFatalError(..)
     , ApnTemporaryError(..)
     , ApnToken(..)
+    , InterruptionLevel(..)
     ) where
 
 import           Control.Concurrent
@@ -180,6 +183,27 @@ instance FromJSON JsonApsAlert where
         , omitNothingFields  = True
         }
 
+-- | The interruption level (urgency) of the notification.
+data InterruptionLevel = InterruptionLevelPassive
+                      | InterruptionLevelActive
+                      | InterruptionLevelTimeSensitive
+                      | InterruptionLevelCritical
+                      deriving (Enum, Eq, Show, Generic)
+
+instance ToJSON InterruptionLevel where
+    toJSON = String . T.pack . hyphenate . drop 17 . show
+      where
+        hyphenate "TimeSensitive" = "time-sensitive"
+        hyphenate other = map toLower other
+
+instance FromJSON InterruptionLevel where
+    parseJSON = withText "InterruptionLevel" $ \t -> case t of
+        "passive" -> pure InterruptionLevelPassive
+        "active" -> pure InterruptionLevelActive
+        "time-sensitive" -> pure InterruptionLevelTimeSensitive
+        "critical" -> pure InterruptionLevelCritical
+        _ -> fail "Invalid interruption level"
+
 -- | Push notification message's content
 data JsonApsMessage
     -- | Push notification message's content
@@ -196,11 +220,13 @@ data JsonApsMessage
     -- ^ The category of the notification. Must be registered by the app beforehand.
     , jamMutableContent :: !(Maybe Int)
     -- ^ Whether the message has mutable content.
+    , jamInterruptionLevel :: !(Maybe InterruptionLevel)
+    -- ^ The interruption level of the notification.
     } deriving (Generic, Show)
 
 -- | Create an empty apn message
 emptyMessage :: JsonApsMessage
-emptyMessage = JsonApsMessage Nothing Nothing Nothing Nothing Nothing
+emptyMessage = JsonApsMessage Nothing Nothing Nothing Nothing Nothing Nothing
 
 -- | Set a sound for an APN message
 setSound
@@ -255,6 +281,24 @@ clearMutableContent
     -> JsonApsMessage
     -- ^ The modified message
 clearMutableContent a = a { jamMutableContent = Nothing }
+
+-- | Set the interruption level part of an APN message
+setInterruptionLevel
+    :: InterruptionLevel
+    -- ^ The interruption level to set
+    -> JsonApsMessage
+    -- ^ The message to modify
+    -> JsonApsMessage
+    -- ^ The modified message
+setInterruptionLevel i a = a { jamInterruptionLevel = Just i }
+
+-- | Clear the interruption level part of an APN message
+clearInterruptionLevel
+    :: JsonApsMessage
+    -- ^ The message to modify
+    -> JsonApsMessage
+    -- ^ The modified message
+clearInterruptionLevel a = a { jamInterruptionLevel = Nothing }
 
 -- | Set the badge part of an APN message
 setBadge
@@ -336,6 +380,7 @@ instance ToJSON JsonApsMessage where
     toJSON     = genericToJSON     defaultOptions
         { fieldLabelModifier = \s -> case drop 3 s of
             "MutableContent" -> "mutable-content"
+            "InterruptionLevel" -> "interruption-level"
             other -> map toLower other
         }
 
@@ -343,6 +388,7 @@ instance FromJSON JsonApsMessage where
     parseJSON = genericParseJSON defaultOptions
         { fieldLabelModifier = \s -> case drop 3 s of
             "mutable-content" -> "MutableContent"
+            "interruption-level" -> "InterruptionLevel"
             other -> map toLower other
         }
 
