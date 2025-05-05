@@ -17,6 +17,7 @@ spec = do
             "sound"    .= Null,
             "badge"    .= Null,
             "mutable-content" .= Null,
+            "interruption-level" .= Null,
             "alert"    .= object [
               "title" .= String "hello",
               "body"  .= String "world"
@@ -29,6 +30,7 @@ spec = do
             "sound"    .= Null,
             "badge"    .= Null,
             "mutable-content" .= Null,
+            "interruption-level" .= Null,
             "alert"    .= object [
               "title" .= String "hello",
               "subtitle" .= String "there",
@@ -42,6 +44,7 @@ spec = do
             "sound"    .= Null,
             "badge"    .= Null,
             "mutable-content" .= Null,
+            "interruption-level" .= Null,
             "alert"    .= object [ "body"  .= String "hello world" ]
           ]
 
