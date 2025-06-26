@@ -25,6 +25,41 @@ Sending a message is as simple as:
     success <- sendMessage session token None payload
     print success
 
+## Widget Support
+
+push-notify-apn supports WidgetKit push notifications for updating iOS widgets. Widget notifications use a different push type and topic format.
+
+### Sending Widget Notifications
+
+For convenience, use the `sendWidgetNotification` function:
+
+    success <- sendWidgetNotification session token Nothing
+    print success
+
+This sends a widget update notification with the `content-changed` flag set to `true`, which will cause WidgetKit to reload your widget's timeline.
+
+### Manual Widget Message Construction
+
+You can also construct widget messages manually:
+
+    let widgetMessage = newWidgetMessage
+    success <- sendMessage session token Nothing widgetMessage
+    print success
+
+### Topic Configuration
+
+When sending widget notifications, the library automatically appends `.push-type.widgets` to your bundle identifier. So if your session was created with bundle ID `com.example.MyApp`, widget notifications will be sent to topic `com.example.MyApp.push-type.widgets`.
+
+### Requirements
+
+To use widget notifications, ensure your iOS app:
+
+1. Has the Push Notifications capability enabled for the widget extension target
+2. Implements a `WidgetPushHandler` to handle push token updates
+3. Configures the widget with `.pushHandler()` in your `WidgetConfiguration`
+
+For more details, see Apple's documentation on WidgetKit push notifications.
+
 # command line utility
 
 The command line utility can be used for testing your app. Use like this:
