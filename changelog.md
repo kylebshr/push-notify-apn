@@ -1,12 +1,3 @@
-0.5.0.0
-=======
-
-- Add WidgetKit push notification support
-- Add ApnPushType enum for specifying push type (currently supports alert, background, and widgets)
-- Add newWidgetMessage function for creating widget notifications with content-changed flag
-- Add sendWidgetNotification convenience function
-- Update all send functions to support push type headers
-
 0.4.0.3
 =======
 
